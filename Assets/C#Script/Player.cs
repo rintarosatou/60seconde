@@ -68,25 +68,39 @@ public class Player : MonoBehaviour
         }
         // アニメーション切り替え（動いてるかどうかで）
         animator.SetBool("Run", isMoving);
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("スペースキーが押された");
+        }
         //Spaceキー（ジャンプ）Raycast で地面にいるときのみ
         if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
-            _rd.AddForce(new Vector3(0, 250, 0));// ジャンプの力（調整可能）
-
+            Debug.Log("スペースキー押していてかつ地面にいる");
+            //Debug.Log("スペースキー押した");
+            _rd.AddForce(new Vector3(0, 500, 0));// ジャンプの力（調整可能）
+            animator.SetTrigger("Jump");         // ジャンプアニメーション再生
         }
+       // Debug.Log("IsGrounded: " + IsGrounded());
+        animator.SetBool("IsGrounded", IsGrounded());
         // いずれかの移動キーが離されたらアニメーション停止
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A))
         {
             animator.SetBool("Run", false);// アニメーションを停止（Run → Idleなど）
         }
-        // --- 足元に地面があるかどうかを判定する ---
-        bool IsGrounded()
-        {
-            // プレイヤーの位置から真下に向かって Ray を 1.1 ユニット飛ばす
-            //オブジェクトの前や下に「Ray（光線）」を飛ばして、
-            // **「何かに当たったか？」**を調べるのに使う
-            // 何か（地面など）にぶつかったら true、ぶつからなければ false を返す
-            return Physics.Raycast(transform.position, Vector3.down, 1.1f);
-        }
+       
+    }
+    // --- 足元に地面があるかどうかを判定する ---
+    bool IsGrounded()
+    {
+        // プレイヤーの位置から真下に向かって Ray を 0.2 ユニット飛ばす
+        //オブジェクトの前や下に「Ray（光線）」を飛ばして、
+        // **「何かに当たったか？」**を調べるのに使う
+        // 何か（地面など）にぶつかったら true、ぶつからなければ false を返す
+        CapsuleCollider col = GetComponent<CapsuleCollider>();
+        float rayLength = 0.1f;
+        Vector3 origin = transform.position + Vector3.down * (col.height / 2 - col.radius + 0.01f); // 少し上から飛ばす
+        Debug.DrawRay(origin,Vector3.down * rayLength,Color.red); // シーンビューにRayを表示
+        return Physics.Raycast(origin,Vector3.down,rayLength);
+       
     }
 }

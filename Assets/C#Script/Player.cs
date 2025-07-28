@@ -41,66 +41,38 @@ public class Player : MonoBehaviour
         //Wキー(前進移動)
         if (Input.GetKey(KeyCode.W))
         {
-            transform.position += gameObject.transform.forward * moveSpeed * Time.deltaTime;// Z方向に移動
-            transform.rotation = Quaternion.Euler(0, 0, 0);// 正面を向く
+            transform.position += gameObject.transform.forward * moveSpeed * Time.deltaTime;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
             isMoving = true;
         }
-        // Sキー（後方移動）
-        if (Input.GetKey(KeyCode.S))
+
+            // Sキー（後方移動）
+            if (Input.GetKey(KeyCode.S))
         {
-            transform.position -= -gameObject.transform.forward * moveSpeed * Time.deltaTime;// Z方向に後退
-            transform.rotation = Quaternion.Euler(0, 180f, 0);// 後ろ向き
+            transform.position -= -gameObject.transform.forward * moveSpeed * Time.deltaTime;
+            transform.rotation = Quaternion.Euler(0, 180f, 0);
             isMoving = true;
         }
         // Dキー（右移動）
         if (Input.GetKey(KeyCode.D))
         {
-            transform.position += new Vector3(0.05f, 0, 0);// X方向に右移動
-            transform.rotation = Quaternion.Euler(0, 90f, 0);// 右を向く
+            transform.position += new Vector3(0.05f, 0, 0);
+            transform.rotation = Quaternion.Euler(0, 90f, 0);
             isMoving = true;
         }
         // Aキー（左移動）
         if (Input.GetKey(KeyCode.A))
         {
-            transform.position -= new Vector3(0.05f, 0, 0);// X方向に左移動
-            transform.rotation = Quaternion.Euler(0, 270f, 0); // 左を向く
+            transform.position -= new Vector3(0.05f, 0, 0);
+            transform.rotation = Quaternion.Euler(0, 270f, 0); 
             isMoving = true;
         }
         // アニメーション切り替え（動いてるかどうかで）
         animator.SetBool("Run", isMoving);
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("スペースキーが押された");
-        }
-        //Spaceキー（ジャンプ）Raycast で地面にいるときのみ
-        if (Input.GetKeyDown(KeyCode.Space) && IsGrounded())
-        {
-            Debug.Log("スペースキー押していてかつ地面にいる");
-            //Debug.Log("スペースキー押した");
-            _rd.AddForce(new Vector3(0, 500, 0));// ジャンプの力（調整可能）
-            animator.SetTrigger("Jump");         // ジャンプアニメーション再生
-        }
-       // Debug.Log("IsGrounded: " + IsGrounded());
-        animator.SetBool("IsGrounded", IsGrounded());
         // いずれかの移動キーが離されたらアニメーション停止
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) || Input.GetKeyUp(KeyCode.D) || Input.GetKeyUp(KeyCode.A))
         {
             animator.SetBool("Run", false);// アニメーションを停止（Run → Idleなど）
         }
-       
-    }
-    // --- 足元に地面があるかどうかを判定する ---
-    bool IsGrounded()
-    {
-        // プレイヤーの位置から真下に向かって Ray を 0.2 ユニット飛ばす
-        //オブジェクトの前や下に「Ray（光線）」を飛ばして、
-        // **「何かに当たったか？」**を調べるのに使う
-        // 何か（地面など）にぶつかったら true、ぶつからなければ false を返す
-        CapsuleCollider col = GetComponent<CapsuleCollider>();
-        float rayLength = 0.1f;
-        Vector3 origin = transform.position + Vector3.down * (col.height / 2 - col.radius + 0.01f); // 少し上から飛ばす
-        Debug.DrawRay(origin,Vector3.down * rayLength,Color.red); // シーンビューにRayを表示
-        return Physics.Raycast(origin,Vector3.down,rayLength);
-       
     }
 }
